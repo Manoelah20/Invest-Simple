@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Invest Simple</title>
+
+    <!-- Ícone da aba -->
+    <link rel="icon" href="/images/favicon.png" type="image/png" />
+
+    <!-- Fonte moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <!-- Script para alternância automática de tema -->
+    <script>
+      const hora = new Date().getHours();
+      const app = document.getElementById('app');
+
+      if (hora >= 6 && hora < 18) {
+        document.body.classList.add('tema-claro');
+        app.style.backgroundImage = "url('/images/bd-day.jpg')";
+      } else {
+        document.body.classList.add('tema-escuro');
+        app.style.backgroundImage = "url('/images/bg-trading.jpg')";
+      }
+    </script>
+
+    <!-- Vue app -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
