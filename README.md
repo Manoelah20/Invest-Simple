@@ -1,6 +1,14 @@
+![Vue.js](https://img.shields.io/badge/Vue.js-2.7-green)
+![Node.js](https://img.shields.io/badge/Node.js-16+-blue)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 # Invest Simple 💰
 
 Um aplicativo moderno para simulação de investimentos e acompanhamento de cotações em tempo real, desenvolvido com Vue.js 2 e Node.js.
+
+## 📸 Demonstração
+
+![Invest Simple App](frontend/public/images/demo.jpg)
 
 ## 🚀 Funcionalidades
 
