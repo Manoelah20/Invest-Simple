@@ -5,9 +5,16 @@ const simuladorRoute = require('./routes/simulador');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Configuração CORS mais específica para desenvolvimento
+// Configuração CORS para desenvolvimento e produção
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000', 
+  'http://127.0.0.1:5173',
+  process.env.NODE_ENV === 'production' ? /^https:\/\/.*\.vercel\.app$/ : null
+].filter(Boolean);
+
 app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'],
+  origin: allowedOrigins,
   credentials: true
 }));
 
