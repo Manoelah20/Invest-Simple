@@ -26,3 +26,6 @@ npm-debug.log*
 # Runtime
 *.pid
 *.seed
+
+.vercel
+.env*.local
