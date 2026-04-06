@@ -1,20 +1,12 @@
 {
-  "buildCommand": "npm run build",
-  "outputDirectory": "frontend/dist",
-  "installCommand": "npm run install:all",
-  "functions": {
-    "backend/server.js": {
-      "runtime": "nodejs18.x"
-    }
-  },
+  "version": 2,
+  "installCommand": "npm install",
+  "builds": [
+    { "src": "frontend/**", "use": "@vercel/static" },
+    { "src": "backend/server.js", "use": "@vercel/node" }
+  ],
   "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/backend/server.js"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/frontend/dist/index.html"
-    }
+    { "source": "/api/(.*)", "destination": "backend/server.js" },
+    { "source": "/(.*)", "destination": "frontend/index.html" }
   ]
 }
