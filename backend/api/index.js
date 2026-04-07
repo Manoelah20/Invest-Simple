@@ -53,7 +53,7 @@ app.get('/api/carteira', (req, res) => {
 // Rota principal
 app.get('/', (req, res) => {
   res.json({ 
-    message: 'API InvestSimples rodando 🚀',
+    message: 'API InvestSimples rodando \ud83d\ude80',
     version: '1.0.0',
     endpoints: {
       simulador: '/api/simulador',
