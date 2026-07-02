@@ -1,0 +1,20 @@
+# Build outputs
+obj/
+bin/
+
+# User secrets
+**/secrets.json
+
+# IDE
+.vs/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# NuGet
+packages/
+*.nupkg
