@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using InvestSimples.Api.Data;
 using InvestSimples.Api.DTOs;
 using InvestSimples.Api.Models;
+using InvestSimples.Api.Services;
 
 namespace InvestSimples.Api.Controllers;
 
@@ -13,24 +14,25 @@ namespace InvestSimples.Api.Controllers;
 public class CotacoesController : ControllerBase
 {
     private readonly InvestContext _context;
+    private readonly BrapiService _brapiService;
 
-    public CotacoesController(InvestContext context)
+    public CotacoesController(InvestContext context, BrapiService brapiService)
     {
         _context = context;
+        _brapiService = brapiService;
     }
 
     [HttpGet]
     public async Task<ActionResult<IEnumerable<CotacaoDto>>> GetCotacoes()
     {
-        var cotacoes = await _context.Ativos
-            .Where(a => a.IsAtivo && (a.Tipo == "Câmbio" || a.Tipo == "Cripto" || a.Tipo == "Índice"))
-            .Select(a => new CotacaoDto
-            {
-                Nome = a.Codigo,
-                Valor = a.PrecoAtual,
-                Variacao = a.VariacaoDia
-            })
-            .ToListAsync();
+        var cotacoesBrapi = await _brapiService.GetCotacoesAsync();
+
+        var cotacoes = cotacoesBrapi.Select(c => new CotacaoDto
+        {
+            Nome = c.Nome,
+            Valor = c.Preco,
+            Variacao = c.Variacao
+        }).ToList();
 
         if (!cotacoes.Any())
         {

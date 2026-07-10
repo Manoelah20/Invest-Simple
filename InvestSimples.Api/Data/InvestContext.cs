@@ -11,6 +11,7 @@ public class InvestContext : DbContext
     public DbSet<Ativo> Ativos => Set<Ativo>();
     public DbSet<Transacao> Transacoes => Set<Transacao>();
     public DbSet<Simulacao> Simulacoes => Set<Simulacao>();
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -42,6 +43,13 @@ public class InvestContext : DbContext
             entity.Property(s => s.ValorFinal).HasPrecision(18, 2);
             entity.Property(s => s.TotalInvestido).HasPrecision(18, 2);
             entity.Property(s => s.RendimentoTotal).HasPrecision(18, 2);
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.HasIndex(rt => rt.Token).IsUnique();
+            entity.HasIndex(rt => rt.UsuarioId);
+            entity.Property(rt => rt.Token).HasMaxLength(500);
         });
 
         SeedData(modelBuilder);

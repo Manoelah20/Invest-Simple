@@ -16,8 +16,10 @@ public class RegisterRequest
 public class AuthResponse
 {
     public string Token { get; set; } = string.Empty;
+    public string RefreshToken { get; set; } = string.Empty;
     public string Tipo { get; set; } = "Bearer";
-    public int ExpiraEm { get; set; } = 3600;
+    public int ExpiraEm { get; set; } = 900;
+    public int RefreshExpiraEm { get; set; } = 604800;
     public UsuarioDto Usuario { get; set; } = new();
 }
 
@@ -25,6 +27,13 @@ public class UsuarioDto
 {
     public int Id { get; set; }
     public string Nome { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+}
+
+public class RefreshRequest
+{
+    public string RefreshToken { get; set; } = string.Empty;
+    public string AccessToken { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
 }
 

@@ -4,42 +4,82 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: investsimples-db
+    env_file:
+      - .env
     environment:
-      POSTGRES_DB: investsimples
-      POSTGRES_USER: investsimples
-      POSTGRES_PASSWORD: investsimples123
+      POSTGRES_DB: ${POSTGRES_DB:-investsimples}
+      POSTGRES_USER: ${POSTGRES_USER:-investsimples}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-investsimples123}
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U investsimples -d investsimples"]
-      interval: 5s
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-investsimples} -d ${POSTGRES_DB:-investsimples}"]
+      interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
   api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: InvestSimples.Api/Dockerfile
+      target: final
+      args:
+        VERSION: ${APP_VERSION:-1.0.0}
     container_name: investsimples-api
+    env_file:
+      - .env
     environment:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: "Host=postgres;Database=investsimples;Username=investsimples;Password=investsimples123"
-      JwtSettings__SecretKey: "InvestSimplesSecretKey2024!@#SuperSecretKey123456789"
-      JwtSettings__Issuer: "InvestSimplesAPI"
-      JwtSettings__Audience: "InvestSimplesClient"
-      JwtSettings__ExpiryMinutes: "60"
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: "Host=postgres;Database=${POSTGRES_DB:-investsimples};Username=${POSTGRES_USER:-investsimples};Password=${POSTGRES_PASSWORD:-investsimples123};Pooling=true;MinPoolSize=5;MaxPoolSize=20"
+      JwtSettings__SecretKey: ${JWT_SECRET_KEY}
+      JwtSettings__Issuer: ${JWT_ISSUER:-InvestSimplesAPI}
+      JwtSettings__Audience: ${JWT_AUDIENCE:-InvestSimplesClient}
+      JwtSettings__ExpiryMinutes: ${JWT_EXPIRY_MINUTES:-15}
+      JwtSettings__RefreshExpiryDays: ${JWT_REFRESH_EXPIRY_DAYS:-7}
+      Brapi__ApiKey: ${BRAPI_API_KEY}
+      Brapi__BaseUrl: ${BRAPI_BASE_URL:-https://brapi.dev/api}
     ports:
       - "5000:8080"
     depends_on:
       postgres:
         condition: service_healthy
     volumes:
-      - ./InvestSimples.Api/wwwroot:/app/wwwroot
-
-volumes:
-      ro
+      - ./InvestSimples.Api/wwwroot:/app/wwwroot:ro
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 volumes:
   postgres_data:
+    driver: local

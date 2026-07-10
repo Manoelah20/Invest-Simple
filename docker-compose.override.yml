@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: InvestSimples.Api/Dockerfile
+      target: build
+    container_name: investsimples-api-dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+    ports:
+      - "5000:8080"
+    volumes:
+      - ./InvestSimples.Api:/src/InvestSimples.Api
+      - ./InvestSimples.Api.Tests:/src/InvestSimples.Api.Tests
+      - ./InvestSimples.Api/wwwroot:/app/wwwroot:ro
+      - ~/.nuget/packages:/root/.nuget/packages
+    command: dotnet watch --project /src/InvestSimples.Api/InvestSimples.Api.csproj --urls "http://+:8080"
+    stdin_open: true
+    tty: true
+
+  postgres:
+    profiles: ["dev-db"]
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: investsimples
+      POSTGRES_USER: investsimples
+      POSTGRES_PASSWORD: investsimples123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_dev_data:
