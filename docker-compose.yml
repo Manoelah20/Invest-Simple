@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: investsimples-db
+    environment:
+      POSTGRES_DB: investsimples
+      POSTGRES_USER: investsimples
+      POSTGRES_PASSWORD: investsimples123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U investsimples -d investsimples"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: investsimples-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Database=investsimples;Username=investsimples;Password=investsimples123"
+      JwtSettings__SecretKey: "InvestSimplesSecretKey2024!@#SuperSecretKey123456789"
+      JwtSettings__Issuer: "InvestSimplesAPI"
+      JwtSettings__Audience: "InvestSimplesClient"
+      JwtSettings__ExpiryMinutes: "60"
+    ports:
+      - "5000:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./InvestSimples.Api/wwwroot:/app/wwwroot
+
+volumes:
+      ro
+
+volumes:
+  postgres_data:

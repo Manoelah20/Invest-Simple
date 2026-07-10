@@ -1,11 +1,11 @@
-# InvestSimples API (.NET 8)
+# InvestSimples API (.NET 9)
 
-API Financeira em .NET 8 com autenticação JWT e Entity Framework Core, complementar ao projeto Vue.js + Node.js.
+API Financeira em .NET 9 com autenticação JWT e Entity Framework Core (SQLite), complementar ao projeto Vue.js + Node.js.
 
 ## 🚀 Tecnologias
 
-- **.NET 8** / C#
-- **Entity Framework Core** com SQL Server (LocalDB)
+- **.NET 9** / C#
+- **Entity Framework Core** com **SQLite** (dev) / SQL Server (prod)
 - **JWT Bearer Authentication**
 - **BCrypt** para hash de senhas
 - **Swagger/OpenAPI** para documentação
@@ -31,14 +31,14 @@ InvestSimples.Api/
 ├── DTOs/
 │   └── AuthDtos.cs
 ├── Program.cs                 # Configuração DI, Auth, Swagger
-└── appsettings.json
+├── appsettings.json
+└── README.md
 ```
 
 ## ⚙️ Como Rodar
 
 ### Pré-requisitos
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- SQL Server LocalDB (incluído no Visual Studio) ou Docker
+- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 
 ### 1. Restaurar dependências
 ```bash
@@ -46,21 +46,14 @@ cd InvestSimples.Api
 dotnet restore
 ```
 
-### 2. Criar banco de dados
+### 2. Executar (cria banco SQLite automaticamente)
 ```bash
-dotnet ef database update
-```
-*Ou apenas rode a aplicação - o `EnsureCreated()` cria automaticamente.*
-
-### 3. Executar
-```bash
-dotnet run
+dotnet run --urls "http://localhost:5000"
 ```
 
 A API estará disponível em:
 - **HTTP**: http://localhost:5000
-- **HTTPS**: https://localhost:5001
-- **Swagger**: http://localhost:5000/swagger
+- **Swagger UI**: http://localhost:5000/swagger
 
 ## 🔐 Autenticação
 
@@ -85,6 +78,15 @@ curl -X POST http://localhost:5000/api/auth/login \
 ```bash
 curl -X GET http://localhost:5000/api/cotacoes \
   -H "Authorization: Bearer SEU_TOKEN_AQUI"
+```
+
+### PowerShell
+```powershell
+$body = '{"email":"teste@investsimples.com","senha":"123456"}'
+$resp = Invoke-RestMethod -Uri "http://localhost:5000/api/auth/login" -Method POST -ContentType "application/json" -Body $body
+$token = $resp.token
+
+Invoke-RestMethod -Uri "http://localhost:5000/api/cotacoes" -Headers @{Authorization="Bearer $token"}
 ```
 
 ## 📡 Endpoints
@@ -140,12 +142,11 @@ curl -X POST http://localhost:5000/api/simulador \
 ## 🐳 Docker (Opcional)
 
 ```dockerfile
-# Dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["InvestSimples.Api.csproj", "./"]
 RUN dotnet restore
@@ -172,6 +173,26 @@ No frontend Vue.js, altere a baseURL da API:
 const API_BASE = 'http://localhost:5000/api'  // .NET API
 // const API_BASE = 'http://localhost:3000/api'  // Node.js API (original)
 ```
+
+## 📦 Dois Backends no Mesmo Repo
+
+```
+invest-simples-app/
+├── backend/                 # Node.js + Express (porta 3000)
+│   ├── server.js
+│   └── routes/
+└── InvestSimples.Api/       # .NET 9 + C# (porta 5000)
+    ├── Controllers/
+    ├── Models/
+    └── Data/
+```
+
+Ambos expõem os mesmos endpoints:
+- `GET /api/cotacoes`
+- `GET /api/carteira`  
+- `POST /api/simulador`
+
+O frontend Vue.js consome **qualquer um** trocando a `baseURL`.
 
 ## 📝 Licença
 

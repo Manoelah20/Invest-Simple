@@ -50,7 +50,9 @@ public class InvestContext : DbContext
     private static void SeedData(ModelBuilder modelBuilder)
     {
         var usuarioId = 1;
-        var senhaHash = BCrypt.Net.BCrypt.HashPassword("123456");
+        // Fixed hash for "123456" - generated once
+        var senhaHash = "$2a$11$4dPSHSI0FAH8fLAsMk4hLesKK.6q.QVLujD7FyJ35N/jAOVggfIc2";
+        var dataFixa = new DateTime(2024, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         modelBuilder.Entity<Usuario>().HasData(
             new Usuario
@@ -59,21 +61,21 @@ public class InvestContext : DbContext
                 Nome = "Usuário Teste",
                 Email = "teste@investsimples.com",
                 SenhaHash = senhaHash,
-                DataCriacao = DateTime.UtcNow,
+                DataCriacao = dataFixa,
                 Ativo = true
             }
         );
 
         modelBuilder.Entity<Ativo>().HasData(
-            new Ativo { Id = 1, Codigo = "PETR4", Nome = "Petrobras PN", Tipo = "Ações", PrecoAtual = 35.50m, VariacaoDia = 2.15m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 2, Codigo = "VALE3", Nome = "Vale ON", Tipo = "Ações", PrecoAtual = 68.90m, VariacaoDia = -1.20m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 3, Codigo = "CDB001", Nome = "CDB Banco X 110% CDI", Tipo = "Renda Fixa", PrecoAtual = 1000.00m, VariacaoDia = 0.05m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 4, Codigo = "LCI001", Nome = "LCI Banco Y 95% CDI", Tipo = "Renda Fixa", PrecoAtual = 1000.00m, VariacaoDia = 0.03m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 5, Codigo = "HGLG11", Nome = "HGLG11 - FII Logística", Tipo = "Fundos", PrecoAtual = 185.40m, VariacaoDia = 1.80m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 6, Codigo = "USD/BRL", Nome = "Dólar Americano", Tipo = "Câmbio", PrecoAtual = 5.25m, VariacaoDia = 0.45m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 7, Codigo = "EUR/BRL", Nome = "Euro", Tipo = "Câmbio", PrecoAtual = 5.65m, VariacaoDia = -0.20m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 8, Codigo = "BTC/BRL", Nome = "Bitcoin", Tipo = "Cripto", PrecoAtual = 265000.00m, VariacaoDia = 3.50m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true },
-            new Ativo { Id = 9, Codigo = "IBOV", Nome = "IBOVESPA", Tipo = "Índice", PrecoAtual = 125000.00m, VariacaoDia = 1.20m, Moeda = "PONTOS", UsuarioId = usuarioId, DataAtualizacao = DateTime.UtcNow, IsAtivo = true }
+            new Ativo { Id = 1, Codigo = "PETR4", Nome = "Petrobras PN", Tipo = "Ações", PrecoAtual = 35.50m, VariacaoDia = 2.15m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 2, Codigo = "VALE3", Nome = "Vale ON", Tipo = "Ações", PrecoAtual = 68.90m, VariacaoDia = -1.20m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 3, Codigo = "CDB001", Nome = "CDB Banco X 110% CDI", Tipo = "Renda Fixa", PrecoAtual = 1000.00m, VariacaoDia = 0.05m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 4, Codigo = "LCI001", Nome = "LCI Banco Y 95% CDI", Tipo = "Renda Fixa", PrecoAtual = 1000.00m, VariacaoDia = 0.03m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 5, Codigo = "HGLG11", Nome = "HGLG11 - FII Logística", Tipo = "Fundos", PrecoAtual = 185.40m, VariacaoDia = 1.80m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 6, Codigo = "USD/BRL", Nome = "Dólar Americano", Tipo = "Câmbio", PrecoAtual = 5.25m, VariacaoDia = 0.45m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 7, Codigo = "EUR/BRL", Nome = "Euro", Tipo = "Câmbio", PrecoAtual = 5.65m, VariacaoDia = -0.20m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 8, Codigo = "BTC/BRL", Nome = "Bitcoin", Tipo = "Cripto", PrecoAtual = 265000.00m, VariacaoDia = 3.50m, Moeda = "BRL", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true },
+            new Ativo { Id = 9, Codigo = "IBOV", Nome = "IBOVESPA", Tipo = "Índice", PrecoAtual = 125000.00m, VariacaoDia = 1.20m, Moeda = "PONTOS", UsuarioId = usuarioId, DataAtualizacao = dataFixa, IsAtivo = true }
         );
     }
 }

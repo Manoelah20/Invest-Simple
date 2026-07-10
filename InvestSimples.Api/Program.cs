@@ -48,8 +48,21 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+// Database: PostgreSQL (prod/Docker) or SQLite (local dev)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var usePostgres = !string.IsNullOrEmpty(connectionString) && connectionString.Contains("Host=");
+
 builder.Services.AddDbContext<InvestContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=investsimples.db"));
+{
+    if (usePostgres)
+        options.UseNpgsql(connectionString);
+    else
+        options.UseSqlite(connectionString ?? "Data Source=investsimples.db");
+});
+
+// Health Checks
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<InvestContext>();
 
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"] ?? "InvestSimplesSecretKey2024!@#SuperSecretKey";
@@ -98,15 +111,28 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
+app.MapGet("/", () => Results.Redirect("/index.html"));
+
+// Health check endpoint
+app.MapHealthChecks("/health");
+
+// Run migrations on startup (skip in Testing environment)
+if (!app.Environment.IsEnvironment("Testing"))
 {
-    var context = scope.ServiceProvider.GetRequiredService<InvestContext>();
-    context.Database.EnsureCreated();
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<InvestContext>();
+        context.Database.Migrate();
+    }
 }
 
 app.Run();
+
+// Make Program accessible for integration tests
+public partial class Program { }

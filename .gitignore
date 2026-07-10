@@ -1,31 +1,44 @@
-# Dependencies
-node_modules/
-*/node_modules/
-
 # Build outputs
-frontend/dist/
-backend/dist/
+bin/
+obj/
 
-# Environment files
-.env
-.env.local
-.env.production
+# NuGet packages
+packages/
+*.nupkg
+
+# User secrets
+**/secrets.json
 
 # IDE
-.vscode/
+.vs/
 .idea/
+*.swp
+*.swo
 
 # OS
 .DS_Store
 Thumbs.db
 
+# Test artifacts
+TestResults/
+*.trx
+
+# Database
+*.db
+*.sqlite
+
 # Logs
 *.log
-npm-debug.log*
 
-# Runtime
-*.pid
-*.seed
+# Temporary files
+*.tmp
+*.temp
 
-.vercel
-.env*.local
+# VS Code
+.vscode/
+
+# Rider
+.idea/
+
+# node_modules (Frontend)
+node_modules/
